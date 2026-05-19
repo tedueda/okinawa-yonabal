@@ -1,6 +1,10 @@
 import { Calendar, Phone, Mail } from 'lucide-react';
 
-export default function BookingForm() {
+interface BookingFormProps {
+  onNavigate?: (page: string) => void;
+}
+
+export default function BookingForm({ onNavigate }: BookingFormProps) {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="pt-32 pb-20 px-4">
@@ -112,7 +116,7 @@ export default function BookingForm() {
                   お問い合わせフォームからご連絡ください
                 </p>
                 <button
-                  onClick={() => window.location.href = 'mailto:info@oceanview-ryukyu.com'}
+                  onClick={() => onNavigate ? onNavigate('contact') : window.location.href = '/contact'}
                   className="w-full px-4 py-2 bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors text-sm"
                 >
                   お問い合わせフォームへ

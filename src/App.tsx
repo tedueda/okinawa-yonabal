@@ -13,6 +13,7 @@ import BookingForm from './components/BookingForm';
 import Blog from './components/Blog';
 import BlogPost from './components/BlogPost';
 import BlogAdminNew from './components/BlogAdminNew';
+import ContactForm from './components/ContactForm';
 import SEO from './components/SEO';
 
 function App() {
@@ -40,6 +41,8 @@ function App() {
       setCurrentPage('tourism');
     } else if (path === '/access' || path === '/access/') {
       setCurrentPage('access');
+    } else if (path === '/contact' || path === '/contact/') {
+      setCurrentPage('contact');
     } else if (path === '/booking/form' || path === '/booking/form/') {
       setCurrentPage('booking-form');
     } else if (path === '/booking' || path === '/booking/') {
@@ -62,6 +65,7 @@ function App() {
       'blog': '/blog',
       'blog-admin': '/blog/admin',
       'access': '/access',
+      'contact': '/contact',
       'booking': '/booking',
       'booking-form': '/booking/form'
     };
@@ -83,7 +87,7 @@ function App() {
         </>
       )}
       {currentPage === 'concept' && <Concept />}
-      {currentPage === 'rooms' && <Rooms onNavigate={handleNavigate} />}
+      {currentPage === 'rooms' && <Rooms />}
       {currentPage === 'gallery' && <Gallery />}
       {currentPage === 'tourism' && <Tourism />}
       {currentPage === 'blog' && !selectedPostId && (
@@ -94,8 +98,9 @@ function App() {
       )}
       {currentPage === 'blog-admin' && <BlogAdminNew />}
       {currentPage === 'access' && <Access />}
+      {currentPage === 'contact' && <ContactForm />}
       {currentPage === 'booking' && <Booking onNavigate={handleNavigate} />}
-      {currentPage === 'booking-form' && <BookingForm />}
+      {currentPage === 'booking-form' && <BookingForm onNavigate={handleNavigate} />}
 
       <footer className="bg-gray-900 text-white py-12 px-4">
         <div className="max-w-6xl mx-auto">
