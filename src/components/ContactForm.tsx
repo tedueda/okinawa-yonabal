@@ -40,6 +40,7 @@ export default function ContactForm() {
           category: formData.category,
           message: formData.message,
           replyto: formData.email,
+          to: 'rikasogabe@yahoo.co.jp,info@okinawa-yonabal.com',
         }),
       });
 
