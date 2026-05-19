@@ -40,60 +40,38 @@ const handler: Handler = async (event) => {
       };
     }
 
-    // SMTP設定 - Yahoo!メール（メイン）
-    const yahooTransporter = nodemailer.createTransport({
-      host: process.env.YAHOO_SMTP_HOST || 'smtp.mail.yahoo.co.jp',
-      port: parseInt(process.env.YAHOO_SMTP_PORT || '465'),
+    // SMTP設定 - Xサーバー
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || 'sv14645.xserver.jp',
+      port: parseInt(process.env.SMTP_PORT || '465'),
       secure: true,
       auth: {
-        user: process.env.YAHOO_SMTP_USER || 'rikasogabe@yahoo.co.jp',
-        pass: process.env.YAHOO_SMTP_PASS || '',
+        user: process.env.SMTP_USER || 'info@okinawa-yonabal.com',
+        pass: process.env.SMTP_PASS || '3831@Ueda',
       },
     });
 
-    // SMTP設定 - Xサーバー（サブ）
-    const xserverTransporter = nodemailer.createTransport({
-      host: process.env.XSERVER_SMTP_HOST || 'sv14645.xserver.jp',
-      port: parseInt(process.env.XSERVER_SMTP_PORT || '465'),
-      secure: true,
-      auth: {
-        user: process.env.XSERVER_SMTP_USER || 'info@okinawa-yonabal.com',
-        pass: process.env.XSERVER_SMTP_PASS || '',
-      },
-    });
-
-    const emailContent = `
-      <h2>Ocean View Ryukyu Tower - お問い合わせ</h2>
-      <p><strong>お名前:</strong> ${name}</p>
-      <p><strong>メールアドレス:</strong> ${email}</p>
-      <p><strong>電話番号:</strong> ${phone || '未入力'}</p>
-      <p><strong>お問い合わせ種別:</strong> ${category}</p>
-      <hr>
-      <p><strong>お問い合わせ内容:</strong></p>
-      <p>${message.replace(/\n/g, '<br>')}</p>
-    `;
-
-    // Yahoo!メールから rikasogabe@yahoo.co.jp へ送信
-    const yahooMailOptions = {
-      from: `"Ocean View Ryukyu Tower" <${process.env.YAHOO_SMTP_USER || 'rikasogabe@yahoo.co.jp'}>`,
-      to: 'rikasogabe@yahoo.co.jp',
+    // 管理者向けメール
+    const adminMailOptions = {
+      from: `"Ocean View Ryukyu Tower" <${process.env.SMTP_USER || 'info@okinawa-yonabal.com'}>`,
+      to: ['rikasogabe@yahoo.co.jp', 'info@okinawa-yonabal.com'],
       replyTo: email,
       subject: `【お問い合わせ】${category} - ${name}様`,
-      html: emailContent,
+      html: `
+        <h2>Ocean View Ryukyu Tower - お問い合わせ</h2>
+        <p><strong>お名前:</strong> ${name}</p>
+        <p><strong>メールアドレス:</strong> ${email}</p>
+        <p><strong>電話番号:</strong> ${phone || '未入力'}</p>
+        <p><strong>お問い合わせ種別:</strong> ${category}</p>
+        <hr>
+        <p><strong>お問い合わせ内容:</strong></p>
+        <p>${message.replace(/\n/g, '<br>')}</p>
+      `,
     };
 
-    // Xサーバーから info@okinawa-yonabal.com へ送信
-    const xserverMailOptions = {
-      from: `"Ocean View Ryukyu Tower" <${process.env.XSERVER_SMTP_USER || 'info@okinawa-yonabal.com'}>`,
-      to: 'info@okinawa-yonabal.com',
-      replyTo: email,
-      subject: `【お問い合わせ】${category} - ${name}様`,
-      html: emailContent,
-    };
-
-    // お客様向け自動返信メール（Yahoo!から送信）
+    // お客様向け自動返信メール
     const customerMailOptions = {
-      from: `"Ocean View Ryukyu Tower" <${process.env.YAHOO_SMTP_USER || 'rikasogabe@yahoo.co.jp'}>`,
+      from: `"Ocean View Ryukyu Tower" <${process.env.SMTP_USER || 'info@okinawa-yonabal.com'}>`,
       to: email,
       subject: 'お問い合わせありがとうございます - Ocean View Ryukyu Tower',
       html: `
@@ -116,20 +94,12 @@ const handler: Handler = async (event) => {
       `,
     };
 
-    // 両方のメールアドレスに送信
-    try {
-      await Promise.all([
-        yahooTransporter.sendMail(yahooMailOptions),
-        xserverTransporter.sendMail(xserverMailOptions),
-      ]);
-    } catch (error) {
-      console.error('Admin email error:', error);
-      throw error;
-    }
+    // 管理者向けメール送信
+    await transporter.sendMail(adminMailOptions);
 
     // お客様向け自動返信メール送信
     try {
-      await yahooTransporter.sendMail(customerMailOptions);
+      await transporter.sendMail(customerMailOptions);
     } catch (error) {
       console.error('Customer email error:', error);
       // 自動返信失敗でも管理者メールは送信済みなので続行
