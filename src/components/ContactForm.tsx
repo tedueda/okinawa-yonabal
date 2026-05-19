@@ -25,26 +25,31 @@ export default function ContactForm() {
     setSubmitStatus('idle');
 
     try {
-      const response = await fetch('/.netlify/functions/contact', {
+      const response = await fetch('https://api.web3forms.com/submit', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          access_key: import.meta.env.VITE_WEB3FORMS_KEY,
+          subject: `【お問い合わせ】${formData.category} - ${formData.name}様`,
+          from_name: formData.name,
+          email: formData.email,
+          phone: formData.phone || '未入力',
+          category: formData.category,
+          message: formData.message,
+          replyto: formData.email,
+        }),
       });
 
-      if (!response.ok) {
-        throw new Error('送信に失敗しました');
+      const data = await response.json();
+      if (data.success) {
+        setSubmitStatus('success');
+        setFormData({ name: '', email: '', phone: '', category: '', message: '' });
+      } else {
+        throw new Error(data.message);
       }
-
-      setSubmitStatus('success');
-      setFormData({
-        name: '',
-        email: '',
-        phone: '',
-        category: '',
-        message: ''
-      });
     } catch (error) {
       console.error('Form submission error:', error);
       setSubmitStatus('error');
