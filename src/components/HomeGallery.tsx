@@ -100,7 +100,7 @@ export default function HomeGallery({ onNavigate }: HomeGalleryProps) {
         </h2>
         <div className="w-24 h-1 bg-cyan-600 mx-auto mb-12" />
         <p className="text-center text-gray-700 text-xl sm:text-2xl font-light tracking-wide max-w-4xl mx-auto mb-12">
-          沖縄の“静けさ”に出会う場所　Ocean View Ryukyu Tower
+          沖縄の“静けさ”に出会う場所 Ocean View Ryukyu Tower
         </p>
 
         <div className="relative mb-6">

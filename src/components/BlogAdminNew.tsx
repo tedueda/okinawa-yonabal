@@ -52,16 +52,9 @@ export default function BlogAdminNew() {
     }
   };
 
-  const hasApiKey = import.meta.env.VITE_OPENAI_API_KEY;
-
   const handleGenerateContent = async () => {
     if (!editingPost.title) {
       alert('タイトルを入力してください');
-      return;
-    }
-
-    if (!hasApiKey) {
-      alert('OpenAI APIキーが設定されていません。\n\n.envファイルにVITE_OPENAI_API_KEYを設定してください。\n\nAPIキーなしでも手動で記事を作成できます。');
       return;
     }
 
@@ -71,7 +64,8 @@ export default function BlogAdminNew() {
       setEditingPost({ ...editingPost, content });
       alert('ブログ記事を生成しました！内容を確認して、必要に応じて編集してください。');
     } catch (error) {
-      alert('記事の生成に失敗しました。OpenAI APIキーを確認してください。');
+      const errorMessage = error instanceof Error ? error.message : '不明なエラー';
+      alert(`記事の生成に失敗しました: ${errorMessage}`);
       console.error(error);
     } finally {
       setIsGenerating(false);
@@ -243,7 +237,6 @@ export default function BlogAdminNew() {
                     onClick={handleGenerateContent}
                     disabled={isGenerating || !editingPost.title}
                     className="flex items-center gap-2 bg-purple-600 text-white px-6 py-2 rounded-lg hover:bg-purple-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
-                    title={!hasApiKey ? 'OpenAI APIキーが必要です' : ''}
                   >
                     {isGenerating ? (
                       <>
@@ -253,15 +246,13 @@ export default function BlogAdminNew() {
                     ) : (
                       <>
                         <Wand2 size={20} />
-                        AI生成{!hasApiKey && ' (要APIキー)'}
+                        AI生成
                       </>
                     )}
                   </button>
                 </div>
                 <p className="text-xs text-gray-500 mt-1">
-                  {hasApiKey 
-                    ? 'タイトルを入力して「AI生成」ボタンを押すと、ChatGPTが1000文字のブログ記事を自動生成します'
-                    : 'AI生成機能を使用するには、OpenAI APIキーの設定が必要です。APIキーなしでも手動で記事を作成できます。'}
+                  タイトルを入力して「AI生成」ボタンを押すと、ChatGPTが1000文字のブログ記事を自動生成します
                 </p>
               </div>
 
