@@ -10,7 +10,7 @@ interface SEOProps {
 }
 
 export default function SEO({
-  title = 'Ocean View Ryukyu Tower - 沖縄オーシャンビュー民泊 | 東海岸の激安一人旅に最適',
+  title = '与那原 オーシャンビュー 琉球タワー 民泊 -沖縄オーシャンビュー民泊 | 沖縄の東海岸の激安一人旅に最適',
   description = '沖縄東海岸の絶景オーシャンビュー民泊。斎場御嶽近く、釣りスポットも充実。一人旅から家族旅行まで、激安価格でご提供。与那原町の快適な宿泊施設。',
   keywords = [
     '沖縄',
